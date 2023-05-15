@@ -23,12 +23,12 @@ const postUsers = async (req = request, res = response) => {
     const user = new User({ name, password, mail, role });
 
     //Verify mail
-    const mailExist = await User.findOne({ mail });
-    if (mailExist) {
-        return res.status(400).json({
-            msg: 'Mail has been took it'
-        });
-    }
+    // const mailExist = await User.findOne({ mail });
+    // if (mailExist) {
+    //     return res.status(400).json({
+    //         msg: 'Mail has been took it'
+    //     });
+    // }
 
     //Encrypt password
     const salt = bcryptjs.genSaltSync();
