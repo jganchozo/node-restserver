@@ -3,17 +3,28 @@ const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user');
 
-const getUsers = (req = request, res = response) => {
+const getUsers = async (req = request, res = response) => {
 
-    const { q, nombre, apikey, page = 1, limit } = req.query;
+    //const { q, nombre, apikey, page = 1, limit } = req.query;
+    const { limit = 5, from = 0 } = req.query;
+    const query = { status: true };
+
+    // const users = await User.find(query)
+    //     .skip(Number(from))
+    //     .limit(Number(limit));
+
+    // const total = await User.countDocuments(query);
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .skip(Number(from))
+            .limit(Number(limit))
+    ]);
 
     res.json({
-        msg: 'get API - controller',
-        q,
-        nombre,
-        apikey,
-        page,
-        limit
+        total,
+        users
     });
 }
 
@@ -45,7 +56,7 @@ const postUsers = async (req = request, res = response) => {
 const putUsers = async (req = request, res = response) => {
 
     const { id } = req.params;
-    const { password, google, mail, ...rest } = req.body;
+    const { _id, password, google, mail, ...rest } = req.body;
 
     //Validar contra base de datos
     if (password) {
@@ -58,10 +69,9 @@ const putUsers = async (req = request, res = response) => {
     const user = await User.findByIdAndUpdate(id, rest);
     const updatedUser = await User.findById(user.id);
 
-    res.status(500).json({
-        msg: 'put API - controller',
+    res.status(500).json(
         updatedUser
-    });
+    );
 }
 
 const patchUsers = (req = request, res = response) => {
