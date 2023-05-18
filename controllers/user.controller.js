@@ -80,10 +80,16 @@ const patchUsers = (req = request, res = response) => {
     });
 }
 
-const deleteUsers = (req = request, res = response) => {
-    res.json({
-        msg: 'delete API - controller'
-    });
+const deleteUsers = async (req = request, res = response) => {
+
+    const { id } = req.params;
+
+    //Fisicamente
+    //const user = await User.findByIdAndDelete(id);
+
+    const user = await User.findByIdAndUpdate(id, { status: false });
+
+    res.json(user);
 }
 
 
